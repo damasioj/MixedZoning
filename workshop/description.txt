@@ -1,38 +1,14 @@
 [h1]Mixed Zoning[/h1]
 
-Adds [b]7 new paintable zone types[/b]. You choose what each one grows: any mix of low- and high-density residential, low- and high-density commercial, industrial and office.
-
-Paint a street with a mixed zone and get houses next to corner shops, apartments above a row of offices, or whatever combination you like.
+Adds [b]7 new customizable zone types[/b] with unique coloring. Ideal for making cities without strict zoning regulations.
 
 [h2]How to use[/h2]
 [list]
-[*]Open the [b]Zoning[/b] panel. Mixed Zone 1 to 7 appear after the standard zones.
-[*][b]Left-click[/b] a mixed zone to paint with it, just like a normal zone.
-[*][b]Right-click[/b] a mixed zone to select it and open its settings window. Tick the building types it should grow. Changes apply and save immediately.
-[*]Press [b]Esc[/b], or left-click any zone, to close the window.
-[*]You can also edit every zone from [b]Options → Mod Settings → Mixed Zoning[/b].
+[*]Open the [b]Zoning[/b] panel and scroll to the right. Mixed Zone 1 to 7 appear after the standard zones.
+[*][b]Left-click[/b] a mixed zone to paint with it.
+[*][b]Right-click[/b] a mixed zone to select it and open its settings window and configure the types of buildings allowed for that zone.
+[*](Optional) You can set minimum demand for high-density buildings in [b]Options → Mod Settings → Mixed Zoning[/b]. By default low or high density buildings will be chosen at random.
 [/list]
-
-[h2]How growth works[/h2]
-[list]
-[*]Each time a building is about to spawn, the zone picks one of its allowed types, weighted by current demand.
-[*]If a zone allows both densities of a type, it picks low or high density at random. In [b]Mod Settings[/b] you can switch on a demand threshold instead: high density once demand reaches it (default 50), low density below it.
-[*]A zone never grows a building type you haven't unlocked yet. Its button stays disabled until at least one of its types is unlocked.
-[*]Grown buildings stay valid as long as the zone still allows their type, so they don't get abandoned.
-[/list]
-
-[h2]How the zones look[/h2]
-Each mixed zone has a fixed look that doesn't change with its settings. On the map, mixed zone squares are drawn turned 45° (as diamonds) and use a checkerboard of two colours, so they're easy to tell apart from standard zones:
-[list]
-[*]Zone 1: light purple
-[*]Zone 2: light green + dark green
-[*]Zone 3: light blue + dark blue
-[*]Zone 4: light green + light blue
-[*]Zone 5: dark green + office blue
-[*]Zone 6: office blue + yellow
-[*]Zone 7: light purple + yellow
-[/list]
-The colours only identify the zone. They say nothing about what it grows, so set each zone up however you like.
 
 [h2]Requirements[/h2]
 [list]
@@ -41,13 +17,11 @@ The colours only identify the zone. They say nothing about what it grows, so set
 
 [h2]Compatibility[/h2]
 [list]
-[*]Saves are safe: mixed zones are stored in the normal zone data, so no extra save data is added.
 [*]Mods that replace zone growth entirely (for example 81 Tiles' zone handling or Building Themes) bypass this mod, so mixed zones won't grow in their areas.
-[*]If the game changes in a way the mod doesn't recognise, it switches itself off and the game runs unmodified.
 [/list]
 
 [h2]Before removing the mod[/h2]
 Repaint mixed-zone areas with a standard zone (or dezone them) before you unsubscribe. Without the mod, those squares hold zone values the base game doesn't use.
 
 [h2]Credits[/h2]
-Inspired by Klyte45's [i]Custom Zone Mixer[/i]. This is a new implementation written from scratch, with none of its code or art.
+Inspired by Klyte45's [i]Custom Zone Mixer[/i]. This is a new implementation written from scratch and made open-source since that mod has been broken for a few years. Feel free to update it and modify it as you like.
