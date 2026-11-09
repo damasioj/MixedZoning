@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Cities: Skylines 1 runs mods on Mono with the .NET 3.5 profile.
+    Point CSManagedDir at the game's Managed folder, e.g.
+      macOS:   ~/Library/Application Support/Steam/steamapps/common/Cities_Skylines/Cities.app/Contents/Resources/Data/Managed
+      Windows: C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed
+    or copy the four DLLs listed below into ../lib.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net35</TargetFramework>
+    <AssemblyName>MixedZoning</AssemblyName>
+    <RootNamespace>MixedZoning</RootNamespace>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <Version>0.1.0</Version>
+    <CSManagedDir Condition="'$(CSManagedDir)' == ''">$(MSBuildThisFileDirectory)../lib</CSManagedDir>
+    <!-- Where the game looks for local (non-Workshop) mods. -->
+    <CSModsDir Condition="'$(CSModsDir)' == '' And $([MSBuild]::IsOSPlatform('OSX'))">$(HOME)/Library/Application Support/Colossal Order/Cities_Skylines/Addons/Mods</CSModsDir>
+    <CSModsDir Condition="'$(CSModsDir)' == '' And $([MSBuild]::IsOSPlatform('Windows'))">$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods</CSModsDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3" PrivateAssets="all" />
+    <!-- MIT-licensed; resolves the shared Harmony 2 instance at runtime. -->
+    <PackageReference Include="CitiesHarmony.API" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp"><HintPath>$(CSManagedDir)/Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="ColossalManaged"><HintPath>$(CSManagedDir)/ColossalManaged.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="ICities"><HintPath>$(CSManagedDir)/ICities.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(CSManagedDir)/UnityEngine.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+  <!-- Copy the built mod into the game's local Mods folder. -->
+  <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(CSModsDir)' != '' And '$(Deploy)' == 'true'">
+    <ItemGroup>
+      <ModFiles Include="$(OutDir)MixedZoning.dll;$(OutDir)CitiesHarmony.API.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ModFiles)" DestinationFolder="$(CSModsDir)/MixedZoning" />
+  </Target>
+
+</Project>
