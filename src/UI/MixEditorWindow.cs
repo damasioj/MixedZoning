@@ -129,23 +129,8 @@ namespace MixedZoning.UI
             {
                 return;
             }
-            var helper = new UIHelper(content);
-            Settings.AddMixCheckboxes(helper, mix);
-
-            helper.AddSpace(6);
-            Fit(helper.AddSlider("High-density demand threshold (all zones)", 0, 100, 5, cfg.HighDensityDemandThreshold, value =>
-            {
-                cfg.HighDensityDemandThreshold = (int)value;
-                Settings.Changed();
-            }));
-        }
-
-        /// <summary>The option templates are sized for the wide options screen; shrink them to the window.</summary>
-        private void Fit(object control)
-        {
-            if (!(control is UIComponent c)) return;
-            if (c.parent != null && c.parent != content) c.parent.width = content.width;
-            c.width = Mathf.Min(c.width, content.width - 8f);
+            // Only the six building types; the high-density threshold stays in the options screen.
+            Settings.AddMixCheckboxes(new UIHelper(content), mix);
         }
     }
 }

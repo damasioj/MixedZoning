@@ -66,9 +66,13 @@ namespace MixedZoning.Config
         public List<ZoneMix> Mixes = new List<ZoneMix>();
 
         /// <summary>
-        /// Low-vs-high density cutoff (0..100) used when a mix allows both densities
-        /// of the same category and the game has to pick one.
+        /// When a mix allows both densities of the same category, the game has to pick one.
+        /// Off (default): low or high at random, 50/50. On: high density once that category's
+        /// demand reaches HighDensityDemandThreshold, low density below it.
         /// </summary>
+        public bool UseHighDensityThreshold = false;
+
+        /// <summary>Low-vs-high density demand cutoff (0..100); only used when UseHighDensityThreshold is on.</summary>
         public int HighDensityDemandThreshold = 50;
 
         public static MixConfig Current { get; private set; } = Defaults();

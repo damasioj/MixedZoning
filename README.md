@@ -23,7 +23,9 @@ Only three `ZoneBlock.GetZone` call sites are swapped for helpers in `Zones/Mixe
 
 1. **`ZoneBlock.SimulationStep`**: the origin cell's mixed zone becomes one vanilla zone,
    picked by demand (district-aware). If both densities of a category are allowed, high density
-   is used once its demand reaches the threshold setting. The rest of the method only sees 0–7.
+   or low density is picked at random (50/50) by default. In Mod Settings you can switch on a demand
+   threshold instead: high density once that category's demand reaches it. The rest of the method
+   only sees 0–7.
 2. **`ZoneBlock.CheckBlock`**: lot sizing joins only cells painted with the same mixed zone.
 3. **`Building.CheckZoning`**: a mixed cell counts as matching if its mix allows the
    building's zone, so grown buildings aren't abandoned.
@@ -37,7 +39,7 @@ removed together and the game runs unmodified (logged as `[MixedZoning] ... fail
   zone list: the game feeds that list into milestone/unlock lookups sized for 8 zones. Clicks and
   tooltip hovers on our buttons are handled by the mod for the same reason.
 - **Editing in game**: right-click a mixed-zone button to open its settings window (the six
-  building types + the density threshold). Left-clicking any zoning button closes it. Changes
+  building types; the low/high density setting is in Mod Settings). Left-clicking any zoning button closes it. Changes
   apply and save immediately.
 - **Fixed look, independent of configuration.** Each zone has its own checkerboard of two colours
   (one colour per zone square) and a numbered icon, and none of it changes when you reconfigure a zone:

@@ -16,7 +16,7 @@ Paint a street with a mixed zone and get houses next to corner shops, apartments
 [h2]How growth works[/h2]
 [list]
 [*]Each time a building is about to spawn, the zone picks one of its allowed types, weighted by current demand.
-[*]If a zone allows both densities of a type, high density takes over once demand reaches the [b]high-density demand threshold[/b] (default 50, adjustable).
+[*]If a zone allows both densities of a type, it picks low or high density at random. In [b]Mod Settings[/b] you can switch on a demand threshold instead: high density once demand reaches it (default 50), low density below it.
 [*]A zone never grows a building type you haven't unlocked yet. Its button stays disabled until at least one of its types is unlocked.
 [*]Grown buildings stay valid as long as the zone still allows their type, so they don't get abandoned.
 [/list]

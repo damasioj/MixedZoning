@@ -87,15 +87,13 @@ namespace MixedZoning.Zones
 
         /// <summary>
         /// Pick one allowed vanilla zone, weighted by its current demand at this location.
-        /// When a mix allows both densities of a category, high density is used once that
-        /// category's demand reaches the configured threshold.
+        /// When a mix allows both densities of a category, one is picked first (see PreferHigh).
         /// </summary>
         private static ItemClass.Zone Choose(ZoneMix mix, Vector3 position)
         {
             ZoneManager zm = Singleton<ZoneManager>.instance;
             DistrictManager dm = Singleton<DistrictManager>.instance;
             ref District district = ref dm.m_districts.m_buffer[dm.GetDistrict(position)];
-            int threshold = MixConfig.Current.HighDensityDemandThreshold;
 
             // Up to 6 candidates; fixed arrays avoid allocating every simulation step.
             ItemClass.Zone[] zones = s_zones;
@@ -109,7 +107,7 @@ namespace MixedZoning.Zones
                 int high = zm.m_actualResidentialDemand + district.CalculateResidentialHighDemandOffset();
                 if (resLow && resHigh)
                 {
-                    if (PreferHigh(high, threshold, ItemClass.Zone.ResidentialLow, ItemClass.Zone.ResidentialHigh)) resLow = false; else resHigh = false;
+                    if (PreferHigh(high, ItemClass.Zone.ResidentialLow, ItemClass.Zone.ResidentialHigh)) resLow = false; else resHigh = false;
                 }
                 if (resLow) { zones[count] = ItemClass.Zone.ResidentialLow; weights[count++] = low; }
                 if (resHigh) { zones[count] = ItemClass.Zone.ResidentialHigh; weights[count++] = high; }
@@ -122,7 +120,7 @@ namespace MixedZoning.Zones
                 int high = zm.m_actualCommercialDemand + district.CalculateCommercialHighDemandOffset();
                 if (comLow && comHigh)
                 {
-                    if (PreferHigh(high, threshold, ItemClass.Zone.CommercialLow, ItemClass.Zone.CommercialHigh)) comLow = false; else comHigh = false;
+                    if (PreferHigh(high, ItemClass.Zone.CommercialLow, ItemClass.Zone.CommercialHigh)) comLow = false; else comHigh = false;
                 }
                 if (comLow) { zones[count] = ItemClass.Zone.CommercialLow; weights[count++] = low; }
                 if (comHigh) { zones[count] = ItemClass.Zone.CommercialHigh; weights[count++] = high; }
@@ -184,12 +182,18 @@ namespace MixedZoning.Zones
         private static bool Unlocked(ItemClass.Zone zone) =>
             !Singleton<UnlockManager>.exists || Singleton<UnlockManager>.instance.Unlocked(zone);
 
-        /// <summary>High density when demand reaches the threshold, unless only one of the two is unlocked.</summary>
-        private static bool PreferHigh(int highDemand, int threshold, ItemClass.Zone low, ItemClass.Zone high)
+        /// <summary>
+        /// Low or high density for a category whose mix allows both. If only one is unlocked, that
+        /// one. Otherwise, with the threshold setting on, high once demand reaches it; with it off
+        /// (default), 50/50 at random using the game's simulation randomizer.
+        /// </summary>
+        private static bool PreferHigh(int highDemand, ItemClass.Zone low, ItemClass.Zone high)
         {
             bool lowOk = Unlocked(low), highOk = Unlocked(high);
             if (lowOk != highOk) return highOk;
-            return highDemand >= threshold;
+            MixConfig cfg = MixConfig.Current;
+            if (cfg.UseHighDensityThreshold) return highDemand >= cfg.HighDensityDemandThreshold;
+            return Singleton<SimulationManager>.instance.m_randomizer.Int32(2u) == 1;
         }
 
         private static readonly ItemClass.Zone[] s_zones = new ItemClass.Zone[6];

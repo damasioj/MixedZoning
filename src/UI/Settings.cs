@@ -1,5 +1,7 @@
+using ColossalFramework.UI;
 using ICities;
 using MixedZoning.Config;
+using UnityEngine;
 
 namespace MixedZoning.UI
 {
@@ -17,18 +19,36 @@ namespace MixedZoning.UI
         {
             var cfg = MixConfig.Current;
 
-            var general = helper.AddGroup("Mixed Zoning");
-            general.AddSlider("High-density demand threshold", 0, 100, 5, cfg.HighDensityDemandThreshold, value =>
+            // When a zone allows both densities of a type: random by default, or a demand threshold.
+            var density = helper.AddGroup("Low vs high density (zones that allow both)");
+            UISlider slider = null;
+            UILabel sliderLabel = null;
+            density.AddCheckbox("Use a demand threshold (off: pick low or high at random)", cfg.UseHighDensityThreshold, on =>
             {
-                cfg.HighDensityDemandThreshold = (int)value;
+                cfg.UseHighDensityThreshold = on;
+                if (slider != null) slider.parent.isEnabled = on;
                 Changed();
             });
+            slider = density.AddSlider(ThresholdText(cfg.HighDensityDemandThreshold), 0, 100, 5, cfg.HighDensityDemandThreshold, value =>
+            {
+                cfg.HighDensityDemandThreshold = Mathf.RoundToInt(value);
+                if (sliderLabel != null) sliderLabel.text = ThresholdText(cfg.HighDensityDemandThreshold);
+                Changed();
+            }) as UISlider;
+            if (slider != null)
+            {
+                sliderLabel = slider.parent.Find<UILabel>("Label");
+                slider.parent.isEnabled = cfg.UseHighDensityThreshold;
+            }
 
             foreach (var mix in cfg.Mixes)
             {
                 AddMixCheckboxes(helper.AddGroup(MixedZones.DisplayName(mix.Slot)), mix);
             }
         }
+
+        private static string ThresholdText(int value) =>
+            $"High density once demand reaches {value} (low density below it)";
 
         /// <summary>The six building-type toggles for one mix. Shared by the options screen and the in-game window.</summary>
         internal static void AddMixCheckboxes(UIHelperBase helper, ZoneMix m)
