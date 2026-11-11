@@ -13,10 +13,18 @@ namespace MixedZoning
 
         private static Color[] originalZoneColors;
 
+        public override void OnCreated(ILoading loading)
+        {
+            base.OnCreated(loading);
+            // Other mods (Building Themes) may load after this one; patch their zone code now.
+            Patches.Patcher.PatchOptional();
+        }
+
         public override void OnLevelLoaded(LoadMode mode)
         {
             InGame = mode == LoadMode.LoadGame || mode == LoadMode.NewGame || mode == LoadMode.NewGameFromScenario;
             if (!InGame) return;
+            Diagnostics.LogPatchState();
             ApplyZoneColors();
             ZoningPanel panel = Object.FindObjectOfType<ZoningPanel>();
             if (panel != null) panel.RefreshPanel();

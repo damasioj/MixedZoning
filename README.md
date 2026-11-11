@@ -67,10 +67,17 @@ removed together and the game runs unmodified (logged as `[MixedZoning] ... fail
 - A mix never grows a zone type the player hasn't unlocked yet. A mix button is disabled until
   at least one of its zone types is unlocked.
 
-### Known incompatibilities
+### Compatibility with other zoning mods
 
-Mods that replace `ZoneBlock.SimulationStep` wholesale (81 Tiles' `FakeZoneBlock`, Building
-Themes) bypass the growth patch; mixed zones won't grow in their areas.
+- **81 Tiles 2** (algernon): works. It only rewrites zone-grid constants (150 → 270) in the
+  same methods, and Harmony applies its transpilers and ours together. The overlay reads the zone
+  grid size from the game, so it works with 81 Tiles' larger grid.
+- **Building Themes**: works. It replaces `ZoneBlock.SimulationStep` with its own copy
+  (`ZoneBlockDetour.SimulationStep`) when a city loads; `Patches/BuildingThemesCompat.cs`
+  applies the same origin-zone swap to that copy. If the copy ever changes shape, only that
+  patch is skipped (logged) and the rest of the mod keeps working.
+- **Original 81 Tiles** (EightyOne, superseded by 81 Tiles 2): replaces zone growth with its own
+  code, so mixed zones won't grow with it. Use 81 Tiles 2.
 
 ## Build
 

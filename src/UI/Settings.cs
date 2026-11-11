@@ -45,6 +45,45 @@ namespace MixedZoning.UI
             {
                 AddMixCheckboxes(helper.AddGroup(MixedZones.DisplayName(mix.Slot)), mix);
             }
+
+            AddDeveloperUpload(helper);
+        }
+
+        /// <summary>Workshop item this mod is published as.</summary>
+        private const ulong WorkshopId = 3836655786UL;
+
+        /// <summary>
+        /// Developer-only: on a machine with the local mod folder (Addons/Mods/MixedZoning), offer to
+        /// upload that folder as an update to the published Workshop item. This opens the game's own
+        /// upload window, the same one its Content Manager "Update" button opens; Steam only accepts
+        /// it from the item's owner. Subscribers don't have the local folder, so they never see it.
+        /// </summary>
+        private static void AddDeveloperUpload(UIHelperBase helper)
+        {
+            string localFolder;
+            try
+            {
+                localFolder = System.IO.Path.Combine(ColossalFramework.IO.DataLocation.modsPath, "MixedZoning");
+                if (!System.IO.Directory.Exists(localFolder)) return;
+            }
+            catch
+            {
+                return;
+            }
+
+            var dev = helper.AddGroup("Developer (only shown with the local mod folder)");
+            dev.AddButton($"Upload local folder as update to Workshop item {WorkshopId}", () =>
+            {
+                try
+                {
+                    var panel = UIView.library.ShowModal<WorkshopModUploadPanel>("WorkshopModUploadPanel");
+                    if (panel != null) panel.SetAsset(localFolder, new ColossalFramework.PlatformServices.PublishedFileId(WorkshopId));
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"[MixedZoning] Could not open the Workshop upload window: {e}");
+                }
+            });
         }
 
         private static string ThresholdText(int value) =>

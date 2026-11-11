@@ -42,14 +42,19 @@ namespace MixedZoning.Zones
         internal static bool TryExactCentre(ZoneBlock[] blocks, ushort[] grid, double cx, double cz, ItemClass.Zone zone,
                                             out double ex, out double ez, out double angle)
         {
-            int gx = Mathf.Clamp((int)(cx / 64.0 + 75.0), 0, 149);
-            int gz = Mathf.Clamp((int)(cz / 64.0 + 75.0), 0, 149);
-            for (int iz = Math.Max(gz - 1, 0); iz <= Math.Min(gz + 1, 149); iz++)
+            // Grid size comes from the array: 150 x 150 in vanilla, 270 x 270 with 81 Tiles 2.
+            int res = (int)Math.Round(Math.Sqrt(grid.Length));
+            if (res * res != grid.Length || res == 0) { ex = ez = angle = 0; return false; }
+            double half = res / 2.0;
+            int max = res - 1;
+            int gx = Mathf.Clamp((int)(cx / 64.0 + half), 0, max);
+            int gz = Mathf.Clamp((int)(cz / 64.0 + half), 0, max);
+            for (int iz = Math.Max(gz - 1, 0); iz <= Math.Min(gz + 1, max); iz++)
             {
-                for (int ix = Math.Max(gx - 1, 0); ix <= Math.Min(gx + 1, 149); ix++)
+                for (int ix = Math.Max(gx - 1, 0); ix <= Math.Min(gx + 1, max); ix++)
                 {
                     int guard = 0;
-                    for (ushort id = grid[iz * 150 + ix]; id != 0 && guard++ < 49152; id = blocks[id].m_nextGridBlock)
+                    for (ushort id = grid[iz * res + ix]; id != 0 && guard++ < blocks.Length; id = blocks[id].m_nextGridBlock)
                     {
                         ZoneBlock blk = blocks[id];
                         if ((blk.m_flags & 3) != 1) continue;   // created and not deleted

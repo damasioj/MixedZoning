@@ -12,7 +12,7 @@ namespace MixedZoning.Patches
     /// transpiler can't find its target (typically after a game update), everything is
     /// unpatched and mixed zones stay inert until the mod is updated.
     ///
-    /// Not yet handled: overlay colours for zones 8..14 and the zoning-panel buttons.
+    /// Patches for other mods (BuildingThemesCompat) are optional and applied separately.
     /// </summary>
     internal static class Patcher
     {
@@ -48,12 +48,24 @@ namespace MixedZoning.Patches
             }
             patched = true;
             Debug.Log("[MixedZoning] Patches applied");
+            PatchOptional();
+        }
+
+        /// <summary>
+        /// Compatibility patches for other mods that copy the game's zone code. Called after
+        /// PatchAll and again when a level loads, in case those mods load after this one.
+        /// </summary>
+        public static void PatchOptional()
+        {
+            if (!patched) return;
+            BuildingThemesCompat.TryPatch(new Harmony(Mod.HarmonyId));
         }
 
         public static void UnpatchAll()
         {
             if (!patched) return;
             new Harmony(Mod.HarmonyId).UnpatchAll(Mod.HarmonyId);
+            BuildingThemesCompat.Reset();
             patched = false;
         }
     }

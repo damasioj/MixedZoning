@@ -17,7 +17,8 @@ Adds [b]7 new customizable zone types[/b] with unique coloring. Ideal for making
 
 [h2]Compatibility[/h2]
 [list]
-[*]Mods that replace zone growth entirely (for example 81 Tiles' zone handling or Building Themes) bypass this mod, so mixed zones won't grow in their areas.
+[*]Works with [b]81 Tiles 2[/b] and [b]Building Themes[/b].
+[*]The original 81 Tiles mod (replaced by 81 Tiles 2) isn't supported: mixed zones won't grow with it.
 [/list]
 
 [h2]Before removing the mod[/h2]

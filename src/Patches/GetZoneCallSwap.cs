@@ -30,6 +30,15 @@ namespace MixedZoning.Patches
         {
             List<CodeInstruction> codes = instructions.ToList();
             int found = codes.Count(c => c.Calls(GetZone));
+            if (found == 0 && codes.Any(c => c.operand is MethodInfo m && m.Name == replacement.Name &&
+                                             m.DeclaringType?.FullName == replacement.DeclaringType?.FullName))
+            {
+                // Already swapped by another loaded copy of this mod (the game can reload a mod
+                // without restarting). That's fine: don't count it as a failure, which would
+                // remove every patch.
+                Debug.LogWarning($"[MixedZoning] {where}: already patched by another copy of the mod; leaving it.");
+                return codes;
+            }
             if (found != expectedCalls)
             {
                 Debug.LogError($"[MixedZoning] {where}: expected {expectedCalls} GetZone call(s), found {found}. " +
